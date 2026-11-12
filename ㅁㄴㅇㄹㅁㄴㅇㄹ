@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>으악의 우주 정거장 🚀</title>
+    <!-- 깔끔하고 귀여운 한글 웹폰트 (Noto Sans KR & Jua) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* =========================================
+           1. CSS 변수 및 테마 설정 (다크 / 라이트 모드)
+           ========================================= */
+        :root {
+            /* 기본 다크 모드 (깊은 우주 테마) */
+            --bg-gradient: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.18);
+            --card-back-bg: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --text-primary: #ffffff;
+            --text-secondary: #cbd5e1;
+            --accent-color: #fbbf24;
+            --accent-glow: rgba(251, 191, 36, 0.5);
+            --btn-bg: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --btn-hover: linear-gradient(135deg, #4f46e5 0%, #9333ea 100%);
+            --input-bg: rgba(0, 0, 0, 0.3);
+            --star-color: #ffffff;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+        }
+
+        [data-theme="light"] {
+            /* 라이트 모드 (파스텔 낮 우주 테마) */
+            --bg-gradient: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            --card-bg: rgba(255, 255, 255, 0.75);
+            --card-border: rgba(255, 255, 255, 0.9);
+            --card-back-bg: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --accent-color: #d97706;
+            --accent-glow: rgba(217, 119, 6, 0.3);
+            --btn-bg: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --btn-hover: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            --input-bg: rgba(255, 255, 255, 0.85);
+            --star-color: #ffffff;
+            --shadow-color: rgba(31, 38, 135, 0.15);
+        }
+
+        /* =========================================
+           2. 기본 레이아웃 및 배경 캔버스
+           ========================================= */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.5s ease, color 0.5s ease;
+            position: relative;
+        }
+
+        /* 배경 별 캔버스 & 마우스 반짝이 캔버스 */
+        #star-canvas, #sparkle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        #star-canvas {
+            z-index: 0;
+        }
+
+        #sparkle-canvas {
+            z-index: 9999;
+        }
+
+        /* 메인 컨테이너 */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 2rem 1.2rem 4rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        /* =========================================
+           3. 상단 헤더 & 테마 전환 버튼
+           ========================================= */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+
+        .badge {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(10px);
+            padding: 0.4rem 1rem;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .theme-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            backdrop-filter: blur(10px);
+            padding: 0.6rem 1.1rem;
+            border-radius: 999px;
+            font-family: 'Jua', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px var(--shadow-color);
+        }
+
+        .theme-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .theme-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* =========================================
+           4. 히어로 섹션 (통통 튀는 별명 애니메이션)
+           ========================================= */
+        .hero {
+            text-align: center;
+            padding: 2rem 1rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 28px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px var(--shadow-color);
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.8rem;
+        }
+
+        .nickname-title {
+            font-family: 'Jua', sans-serif;
+            font-size: clamp(2.8rem, 8vw, 4.5rem);
+            margin: 0.5rem 0 1rem;
+            letter-spacing: 2px;
+        }
+
+        /* 통통 튀는 글자 애니메이션 */
+        .bounce-char {
+            display: inline-block;
+            color: var(--accent-color);
+            text-shadow: 0 0 20px var(--accent-glow);
+            animation: bounceText 1.4s infinite ease-in-out;
+        }
+
+        .bounce-char:nth-child(1) { animation-delay: 0s; }
+        .bounce-char:nth-child(2) { animation-delay: 0.15s; }
+        .bounce-char:nth-child(3) { animation-delay: 0.3s; }
+        .bounce-char:nth-child(4) { animation-delay: 0.45s; }
+        .bounce-char:nth-child(5) { animation-delay: 0.6s; }
+
+        @keyframes bounceText {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            40% {
+                transform: translateY(-18px) scale(1.1) rotate(-4deg);
+            }
+            70% {
+                transform: translateY(4px) scale(0.95) rotate(2deg);
+            }
+        }
+
+        .hero-desc {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            max-width: 550px;
+            margin: 0 auto;
+        }
+
+        /* =========================================
+           5. 공통 섹션 카드 스타일
+           ========================================= */
+        .section-box {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 1.8rem;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px var(--shadow-color);
+        }
+
+        .section-title {
+            font-family: 'Jua', sans-serif;
+            font-size: 1.7rem;
+            margin-bottom: 0.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-hint {
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* =========================================
+           6. 방문자 환영 인사 칸
+           ========================================= */
+        .welcome-form {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .welcome-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.85rem 1.2rem;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .welcome-input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .welcome-input:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .primary-btn {
+            background: var(--btn-bg);
+            color: #ffffff;
+            border: none;
+            padding: 0.85rem 1.5rem;
+            border-radius: 16px;
+            font-family: 'Jua', sans-serif;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .primary-btn:hover {
+            background: var(--btn-hover);
+            transform: translateY(-2px);
+        }
+
+        .primary-btn:active {
+            transform: scale(0.96);
+        }
+
+        .welcome-message {
+            margin-top: 1.2rem;
+            padding: 1rem 1.2rem;
+            border-radius: 16px;
+            background: rgba(251, 191, 36, 0.15);
+            border: 1px dashed var(--accent-color);
+            font-size: 1.05rem;
+            font-weight: 700;
+            display: none;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* =========================================
+           7. 좋아하는 것 3가지 (3D 플립 카드)
+           ========================================= */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+
+        @media (max-width: 700px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .flip-card {
+            background-color: transparent;
+            height: 230px;
+            perspective: 1000px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 6px 20px var(--shadow-color);
+        }
+
+        .flip-card-front {
+            background: var(--card-bg);
+            transition: transform 0.2s;
+        }
+
+        .flip-card:hover .flip-card-front {
+            border-color: var(--accent-color);
+        }
+
+        .card-emoji {
+            font-size: 3.5rem;
+            margin-bottom: 0.8rem;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+
+        .card-label {
+            font-family: 'Jua', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .card-tap-hint {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+        }
+
+        .flip-card-back {
+            background: var(--card-back-bg);
+            color: #ffffff;
+            transform: rotateY(180deg);
+            line-height: 1.55;
+        }
+
+        .flip-card-back h4 {
+            font-family: 'Jua', sans-serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.6rem;
+            color: #fde047;
+        }
+
+        .flip-card-back p {
+            font-size: 0.95rem;
+            word-break: keep-all;
+        }
+
+        /* =========================================
+           8. OX 퀴즈 섹션
+           ========================================= */
+        .quiz-question {
+            font-family: 'Jua', sans-serif;
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 1.2rem;
+            background: var(--input-bg);
+            border-radius: 18px;
+            margin-bottom: 1.2rem;
+            border: 1px solid var(--card-border);
+        }
+
+        .ox-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .ox-btn {
+            width: 110px;
+            height: 110px;
+            border-radius: 24px;
+            border: 2px solid var(--card-border);
+            font-family: 'Jua', sans-serif;
+            font-size: 3.2rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+        }
+
+        .btn-o {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+        }
+
+        .btn-x {
+            background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+            box-shadow: 0 6px 20px rgba(244, 63, 94, 0.35);
+        }
+
+        .ox-btn:hover {
+            transform: translateY(-4px) scale(1.04);
+        }
+
+        .ox-btn:active {
+            transform: scale(0.94);
+        }
+
+        .quiz-result {
+            margin-top: 1.4rem;
+            padding: 1.2rem;
+            border-radius: 18px;
+            text-align: center;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .quiz-result.correct {
+            display: block;
+            background: rgba(16, 185, 129, 0.2);
+            border: 2px solid #10b981;
+            animation: popIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .quiz-result.wrong {
+            display: block;
+            background: rgba(244, 63, 94, 0.2);
+            border: 2px solid #f43f5e;
+            animation: shakeHorizontal 0.5s ease-in-out;
+        }
+
+        /* =========================================
+           9. 오늘의 랜덤 우주 운세
+           ========================================= */
+        .fortune-box {
+            text-align: center;
+        }
+
+        .fortune-display {
+            min-height: 110px;
+            margin-top: 1.3rem;
+            padding: 1.4rem;
+            border-radius: 20px;
+            background: var(--input-bg);
+            border: 1px dashed var(--accent-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .fortune-text {
+            font-size: 1.15rem;
+            font-weight: 700;
+            word-break: keep-all;
+            line-height: 1.5;
+        }
+
+        .fortune-lucky {
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        /* =========================================
+           10. 애니메이션 키프레임 & 푸터
+           ========================================= */
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes shakeHorizontal {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-12px); }
+            40% { transform: translateX(12px); }
+            60% { transform: translateX(-8px); }
+            80% { transform: translateX(8px); }
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            padding-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 배경 반짝이는 별 캔버스 -->
+    <canvas id="star-canvas"></canvas>
+    <!-- 마우스 반짝이 효과 캔버스 -->
+    <canvas id="sparkle-canvas"></canvas>
+
+    <div class="container">
+        <!-- 상단 바: 배지 & 다크/라이트 모드 버튼 -->
+        <header>
+            <div class="badge">🛸 우주 탐사선 탑승 환영</div>
+            <button id="theme-toggle" class="theme-btn" aria-label="화면 테마 변경">
+                <span id="theme-icon">☀️</span>
+                <span id="theme-text">밝은 우주</span>
+            </button>
+        </header>
+
+        <!-- 히어로 섹션: 통통 튀는 별명 '으악' -->
+        <section class="hero">
+            <p class="hero-subtitle">반짝이는 은하수 어딘가에 살고 있는</p>
+            <h1 class="nickname-title" aria-label="으악">
+                <span class="bounce-char">✨</span>
+                <span class="bounce-char">으</span>
+                <span class="bounce-char">악</span>
+                <span class="bounce-char">✨</span>
+            </h1>
+            <p class="hero-desc">
+                놀라서 지르는 비명 아닙니다! 세상에서 제일 유쾌한 우주 여행자 <strong>'으악'</strong>의 비밀 아지트에 오신 걸 환영해요. 아래 카드들을 눌러 저를 파헤쳐 보세요!
+            </p>
+        </section>
+
+        <!-- 1. 방문자 환영 인사 칸 -->
+        <section class="section-box">
+            <h2 class="section-title">👽 우주 방문록 남기기</h2>
+            <p class="section-hint">당신의 닉네임을 알려주시면 우주 신호로 환영 인사를 보내드려요!</p>
+            <form id="welcome-form" class="welcome-form">
+                <input 
+                    type="text" 
+                    id="visitor-name" 
+                    class="welcome-input" 
+                    placeholder="예: 씩씩한 토끼, 별빛 여행자..." 
+                    maxlength="20"
+                    required
+                >
+                <button type="submit" class="primary-btn">인사 받기 🚀</button>
+            </form>
+            <div id="welcome-message" class="welcome-message"></div>
+        </section>
+
+        <!-- 2. 좋아하는 것 3가지 (클릭 시 뒤집히는 카드) -->
+        <section class="section-box">
+            <h2 class="section-title">💫 내가 좋아하는 것 3가지</h2>
+            <p class="section-hint">카드를 톡! 눌러서 뒤집어 보세요. 진짜 이유가 숨어 있어요!</p>
+            
+            <div class="cards-grid">
+                <!-- 카드 1: 게임 -->
+                <div class="flip-card" tabindex="0" role="button" aria-label="게임 카드 뒤집기">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="card-emoji">🎮</div>
+                            <div class="card-label">게임</div>
+                            <span class="card-tap-hint">클릭해서 이유 보기 ↻</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4>🎮 현실 도피 마법!</h4>
+                            <p>현실에선 평범한 지구인이지만, 게임 속에선 전설의 용사도 되고 우주 해적도 될 수 있으니까요! (단, 지면 별명처럼 '으악!' 소리 나옴)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 카드 2: 잠 -->
+                <div class="flip-card" tabindex="0" role="button" aria-label="잠 카드 뒤집기">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="card-emoji">🛌</div>
+                            <div class="card-label">잠</div>
+                            <span class="card-tap-hint">클릭해서 이유 보기 ↻</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4>🛌 합법적 시간 여행!</h4>
+                            <p>이불 밖은 위험해요! 눈을 감았다 뜨면 내일로 순간이동하는 가장 안전하고 포근한 우주선 조종 시간이기 때문이죠. 쿨쿨...💤</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 카드 3: 책 -->
+                <div class="flip-card" tabindex="0" role="button" aria-label="책 카드 뒤집기">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <div class="card-emoji">📚</div>
+                            <div class="card-label">책</div>
+                            <span class="card-tap-hint">클릭해서 이유 보기 ↻</span>
+                        </div>
+                        <div class="flip-card-back">
+                            <h4>📚 종이로 만든 포탈!</h4>
+                            <p>로켓 연료 없이도 한 장씩 넘길 때마다 다른 차원의 세계로 데려다주는 최고 가성비 타임머신! (가끔 수면제 역할도 톡톡히 함)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. OX 퀴즈 -->
+        <section class="section-box">
+            <h2 class="section-title">❓ 으악 탐구 OX 퀴즈</h2>
+            <p class="section-hint">과연 저에 대해 얼마나 잘 맞히실 수 있을까요? 정답을 골라보세요!</p>
+            
+            <div class="quiz-question">
+                Q. "나는 17살이다"
+            </div>
+
+            <div class="ox-buttons">
+                <button type="button" class="ox-btn btn-o" id="btn-o" aria-label="O 선택">O</button>
+                <button type="button" class="ox-btn btn-x" id="btn-x" aria-label="X 선택">X</button>
+            </div>
+
+            <div id="quiz-result" class="quiz-result"></div>
+        </section>
+
+        <!-- 4. 오늘의 랜덤 운세 -->
+        <section class="section-box fortune-box">
+            <h2 class="section-title" style="justify-content: center;">🔮 오늘의 우주 운세 뽑기</h2>
+            <p class="section-hint">버튼을 누르면 은하수가 점지해 주는 오늘의 운세가 나타납니다!</p>
+            
+            <button type="button" id="fortune-btn" class="primary-btn">✨ 오늘의 운세 뽑기 ✨</button>
+            
+            <div class="fortune-display" id="fortune-display">
+                <p class="fortune-text" id="fortune-text">버튼을 눌러 오늘의 행운 메시지를 확인해 보세요!</p>
+                <span class="fortune-lucky" id="fortune-lucky"></span>
+            </div>
+        </section>
+
+        <footer>
+            ✨ 제작: 우주 여행자 으악 | 개인정보 청정 구역 🚀
+        </footer>
+    </div>
+
+    <script>
+        /* =========================================================
+           1. 다크 모드 / 라이트 모드 전환 기능
+           ========================================================= */
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeText = document.getElementById('theme-text');
+        const htmlEl = document.documentElement;
+
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = htmlEl.getAttribute('data-theme');
+            if (currentTheme === 'dark') {
+                htmlEl.setAttribute('data-theme', 'light');
+                themeIcon.textContent = '🌙';
+                themeText.textContent = '어두운 우주';
+            } else {
+                htmlEl.setAttribute('data-theme', 'dark');
+                themeIcon.textContent = '☀️';
+                themeText.textContent = '밝은 우주';
+            }
+        });
+
+        /* =========================================================
+           2. 방문자 환영 인사 기능
+           ========================================================= */
+        const welcomeForm = document.getElementById('welcome-form');
+        const visitorInput = document.getElementById('visitor-name');
+        const welcomeMessage = document.getElementById('welcome-message');
+
+        welcomeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = visitorInput.value.trim();
+            if (!name) return;
+
+            const greetings = [
+                `우와! '${name}'님, 반가워요! 은하수 너머에서 여기까지 찾아와 주시다니 영광이에요! 🛸✨`,
+                `삐빅-! 우주 레이더에 '${name}'님이 포착되었습니다! 오늘 하루 별처럼 빛나길 바랄게요! 🌟`,
+                `어서 오세요, '${name}'님! '으악'의 비밀 우주 정거장에 오신 걸 열렬히 환영합니다! 🎉🚀`
+            ];
+            const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
+
+            welcomeMessage.textContent = randomGreeting;
+            welcomeMessage.style.display = 'block';
+            
+            // 재애니메이션 트리거
+            welcomeMessage.style.animation = 'none';
+            void welcomeMessage.offsetWidth;
+            welcomeMessage.style.animation = 'popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+
+            // 반짝이 파티클 폭죽 생성
+            burstSparkles(window.innerWidth / 2, welcomeMessage.getBoundingClientRect().top, 25);
+        });
+
+        /* =========================================================
+           3. 좋아하는 것 카드 뒤집기 (클릭 & 키보드 접근성)
+           ========================================================= */
+        const flipCards = document.querySelectorAll('.flip-card');
+        flipCards.forEach(card => {
+            card.addEventListener('click', () => {
+                card.classList.toggle('flipped');
+            });
+            card.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    card.classList.toggle('flipped');
+                }
+            });
+        });
+
+        /* =========================================================
+           4. OX 퀴즈 ("나는 17살이다" -> 정답 X) + 축하/아쉬움 효과
+           ========================================================= */
+        const btnO = document.getElementById('btn-o');
+        const btnX = document.getElementById('btn-x');
+        const quizResult = document.getElementById('quiz-result');
+
+        function handleQuiz(userChoice, event) {
+            // 기존 클래스 초기화
+            quizResult.className = 'quiz-result';
+            void quizResult.offsetWidth; // 리플로우로 애니메이션 재실행
+
+            if (userChoice === 'X') {
+                // 정답 (X) -> 축하 효과!
+                quizResult.classList.add('correct');
+                quizResult.innerHTML = `
+                    🎉 <strong>정답입니다! 딩동댕~!!</strong> 🎉<br>
+                    저는 17살이 아니랍니다! 역시 눈치가 우주 최강이시네요! 🥳✨
+                `;
+                // 화면 중앙과 버튼 위치에서 화려한 파티클 축포 발사
+                const rect = event.target.getBoundingClientRect();
+                burstSparkles(rect.left + rect.width / 2, rect.top + rect.height / 2, 45);
+                burstSparkles(window.innerWidth * 0.3, window.innerHeight * 0.5, 30);
+                burstSparkles(window.innerWidth * 0.7, window.innerHeight * 0.5, 30);
+            } else {
+                // 오답 (O) -> 아쉬운 효과!
+                quizResult.classList.add('wrong');
+                quizResult.innerHTML = `
+                    💦 <strong>으악! 땡~ 아쉽네요!</strong> 💦<br>
+                    힌트: 정답은 반대쪽에 있어요! 다시 한 번 눌러보실래요? 🥺
+                `;
+            }
+        }
+
+        btnO.addEventListener('click', (e) => handleQuiz('O', e));
+        btnX.addEventListener('click', (e) => handleQuiz('X', e));
+
+        /* =========================================================
+           5. 오늘의 운세 랜덤 뽑기 (12가지 준비)
+           ========================================================= */
+        const fortunes = [
+            { text: "🌟 오늘은 무슨 일을 해도 술술 풀리는 슈퍼 럭키 데이! 로또 대신 아이스크림을 사 먹어 보세요.", lucky: "행운의 아이템: 반짝이는 별 스티커" },
+            { text: "🎮 게임 연승의 기운이 감돌고 있어요! 팀운이 우주 끝까지 상승하는 날입니다.", lucky: "행운의 색깔: 네온 퍼플" },
+            { text: "🛌 오늘은 일찍 이불 속으로 들어가면 내일 아침 개운함이 200% 충전됩니다!", lucky: "행운의 숫자: 7" },
+            { text: "📚 우연히 펼친 페이지나 지나가다 본 글귀에서 엄청난 영감을 얻게 될 거예요.", lucky: "행운의 아이템: 책갈피" },
+            { text: "🍕 맛있는 음식이 당신을 기다리고 있어요! 고민하던 메뉴가 있다면 오늘 당장 드세요.", lucky: "행운의 음식: 치즈가 듬뿍 든 요리" },
+            { text: "🚀 예상치 못한 즐거운 연락이나 기분 좋은 소식이 날아올 예감입니다!", lucky: "행운의 방향: 동쪽" },
+            { text: "🍀 길 가다 네잎클로버를 발견할지도 몰라요! 발밑을 살짝 살펴보며 걸어보세요.", lucky: "행운의 색깔: 민트 그린" },
+            { text: "🎵 오늘 듣는 플레이리스트의 첫 곡이 하루의 기분을 최고로 만들어 줄 거예요.", lucky: "행운의 행동: 흥얼거리며 걷기" },
+            { text: "🛸 잠시 멍때리는 시간이 필요해요! 5분만 창밖이나 하늘을 보며 우주 여행을 떠나보세요.", lucky: "행운의 시간: 오후 4시 44분" },
+            { text: "💎 당신의 유머 감각이 폭발하는 날! 주변 사람들이 당신 덕분에 크게 웃게 됩니다.", lucky: "행운의 표정: 씨익 웃기" },
+            { text: "🌈 작은 실수를 해도 귀엽게 넘어갈 수 있는 너그러운 우주의 기운이 함께합니다.", lucky: "행운의 주문: 으악, 오히려 좋아!" },
+            { text: "☄️ 별똥별에 소원을 빌면 이루어질 확률 99.9%! 오늘 밤 하늘을 한 번 올려다보세요.", lucky: "행운의 색깔: 골드 옐로우" }
+        ];
+
+        const fortuneBtn = document.getElementById('fortune-btn');
+        const fortuneText = document.getElementById('fortune-text');
+        const fortuneLucky = document.getElementById('fortune-lucky');
+        let lastFortuneIndex = -1;
+
+        fortuneBtn.addEventListener('click', (e) => {
+            let randomIndex;
+            // 연속으로 같은 운세가 나오지 않도록 처리
+            do {
+                randomIndex = Math.floor(Math.random() * fortunes.length);
+            } while (randomIndex === lastFortuneIndex);
+            lastFortuneIndex = randomIndex;
+
+            const selected = fortunes[randomIndex];
+            
+            fortuneText.style.opacity = 0;
+            fortuneLucky.style.opacity = 0;
+
+            setTimeout(() => {
+                fortuneText.textContent = selected.text;
+                fortuneLucky.textContent = `✨ ${selected.lucky}`;
+                fortuneText.style.transition = 'opacity 0.4s';
+                fortuneLucky.style.transition = 'opacity 0.4s';
+                fortuneText.style.opacity = 1;
+                fortuneLucky.style.opacity = 1;
+            }, 150);
+
+            const rect = e.target.getBoundingClientRect();
+            burstSparkles(rect.left + rect.width / 2, rect.top + rect.height / 2, 20);
+        });
+
+        /* =========================================================
+           6. 배경 반짝이는 우주 별 애니메이션 (Canvas)
+           ========================================================= */
+        const starCanvas = document.getElementById('star-canvas');
+        const starCtx = starCanvas.getContext('2d');
+        let stars = [];
+
+        function resizeStarCanvas() {
+            starCanvas.width = window.innerWidth;
+            starCanvas.height = window.innerHeight;
+            initStars();
+        }
+
+        function initStars() {
+            stars = [];
+            const starCount = Math.floor((starCanvas.width * starCanvas.height) / 7000);
+            for (let i = 0; i < starCount; i++) {
+                stars.push({
+                    x: Math.random() * starCanvas.width,
+                    y: Math.random() * starCanvas.height,
+                    radius: Math.random() * 2 + 0.5,
+                    alpha: Math.random(),
+                    alphaChange: (Math.random() * 0.02 + 0.005) * (Math.random() < 0.5 ? 1 : -1),
+                    speedY: Math.random() * 0.25 + 0.05
+                });
+            }
+        }
+
+        function animateStars() {
+            starCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+
+            stars.forEach(star => {
+                // 반짝임(투명도) 업데이트
+                star.alpha += star.alphaChange;
+                if (star.alpha <= 0.1 || star.alpha >= 1) {
+                    star.alphaChange *= -1;
+                }
+
+                // 천천히 위로 떠다니는 움직임
+                star.y -= star.speedY;
+                if (star.y < 0) {
+                    star.y = starCanvas.height;
+                    star.x = Math.random() * starCanvas.width;
+                }
+
+                starCtx.beginPath();
+                starCtx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                starCtx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                starCtx.fill();
+            });
+
+            requestAnimationFrame(animateStars);
+        }
+
+        /* =========================================================
+           7. 마우스 & 터치를 따라다니는 반짝이 효과 (Canvas)
+           ========================================================= */
+        const sparkleCanvas = document.getElementById('sparkle-canvas');
+        const sparkleCtx = sparkleCanvas.getContext('2d');
+        let sparkles = [];
+        const sparkleColors = ['#fde047', '#f472b6', '#38bdf8', '#a78bfa', '#ffffff', '#34d399'];
+
+        function resizeSparkleCanvas() {
+            sparkleCanvas.width = window.innerWidth;
+            sparkleCanvas.height = window.innerHeight;
+        }
+
+        function createSparkle(x, y, isBurst = false) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = isBurst ? (Math.random() * 5 + 2) : (Math.random() * 1.5 + 0.3);
+            sparkles.push({
+                x: x,
+                y: y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                size: isBurst ? (Math.random() * 5 + 3) : (Math.random() * 3.5 + 1.5),
+                color: sparkleColors[Math.floor(Math.random() * sparkleColors.length)],
+                life: 1,
+                decay: isBurst ? (Math.random() * 0.025 + 0.015) : (Math.random() * 0.03 + 0.02)
+            });
+        }
+
+        // 여러 개의 반짝이를 한 번에 터뜨리는 함수 (퀴즈 정답, 운세 뽑기 등)
+        function burstSparkles(x, y, count) {
+            for (let i = 0; i < count; i++) {
+                createSparkle(x, y, true);
+            }
+        }
+
+        // 마우스 이동 시 반짝이 생성
+        window.addEventListener('mousemove', (e) => {
+            for (let i = 0; i < 2; i++) {
+                createSparkle(e.clientX, e.clientY, false);
+            }
+        });
+
+        // 모바일 터치 이동 시에도 반짝이 생성
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                const touch = e.touches[0];
+                createSparkle(touch.clientX, touch.clientY, false);
+            }
+        }, { passive: true });
+
+        // 별 모양 그리기 헬퍼 함수
+        function drawStarShape(ctx, cx, cy, spikes, outerRadius, innerRadius, color, alpha) {
+            let rot = Math.PI / 2 * 3;
+            let x = cx;
+            let y = cy;
+            let step = Math.PI / spikes;
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - outerRadius);
+            for (let i = 0; i < spikes; i++) {
+                x = cx + Math.cos(rot) * outerRadius;
+                y = cy + Math.sin(rot) * outerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+
+                x = cx + Math.cos(rot) * innerRadius;
+                y = cy + Math.sin(rot) * innerRadius;
+                ctx.lineTo(x, y);
+                rot += step;
+            }
+            ctx.lineTo(cx, cy - outerRadius);
+            ctx.closePath();
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.restore();
+        }
+
+        function animateSparkles() {
+            sparkleCtx.clearRect(0, 0, sparkleCanvas.width, sparkleCanvas.height);
+
+            for (let i = sparkles.length - 1; i >= 0; i--) {
+                const p = sparkles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.04; // 살짝 아래로 떨어지는 중력 효과
+                p.life -= p.decay;
+
+                if (p.life <= 0) {
+                    sparkles.splice(i, 1);
+                } else {
+                    drawStarShape(sparkleCtx, p.x, p.y, 4, p.size * 1.6, p.size * 0.5, p.color, p.life);
+                }
+            }
+
+            requestAnimationFrame(animateSparkles);
+        }
+
+        // 화면 크기 변경 대응 및 초기 실행
+        window.addEventListener('resize', () => {
+            resizeStarCanvas();
+            resizeSparkleCanvas();
+        });
+
+        window.onload = () => {
+            resizeStarCanvas();
+            resizeSparkleCanvas();
+            animateStars();
+            animateSparkles();
+        };
+    </script>
+</body>
+</html>
